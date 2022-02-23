@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <title>タイピングゲーム</title>
+</head>
+
+<body>
+    <h1>タイピングゲーム</h1>
+    <div id="app">
+        <div v-if="!game_start_flg">
+            <button v-on:click="game_start()">START</button>
+        </div>
+        <div v-if="game_start_flg">
+            <div v-if="correct_num == question_length">Crear</div>
+            <div v-if="correct_num != question_length">
+                <div>{{ question }}</div>
+                <input type="text" v-model="answer" id="answer_form">
+                <div>{{ correct_num }}/{{ question_length }}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                game_start_flg: "",
+                questions: ["muscle", "apple", "banana", "milky", "america", "fairy"],
+                question: "",
+                correct_num: 0,
+                question_length: 0,
+                answer: "",
+                random: 0
+            },
+            methods: {
+                game_start: function () {
+                    this.game_start_flg = true
+                    this.question_length = this.questions.length
+                    this.random = Math.floor(Math.random() * ((this.question_length - this.correct_num) - 0))
+                    this.question = this.questions[this.random]
+                    this.$nextTick(function () {
+                        document.getElementById("answer_form").focus()
+                    })
+                }
+            },
+            watch: {
+                answer: function (e) {
+                    if (e == this.question) {
+                        this.questions.splice(this.random, 1)
+                        this.answer = ""
+                        this.correct_num += 1
+                        this.random = Math.floor(Math.random() * ((this.question_length - this.correct_num) - 0))
+                        this.question = this.questions[this.random]
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
